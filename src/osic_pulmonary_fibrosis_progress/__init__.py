@@ -1,1 +1,1 @@
-from . import dataset, datasource, io, lightning, net, util
+from . import dataset, datasource, io, lightning, net, util, metric

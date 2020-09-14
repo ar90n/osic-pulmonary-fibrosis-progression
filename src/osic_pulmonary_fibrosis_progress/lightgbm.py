@@ -2,9 +2,9 @@ from typing import List, Optional, Dict, Any
 
 import lightgbm as lgb
 import pandas as pd
+import numpy as np
 
-from .datasource import DataSource
-
+from .dataset import Dataset
 
 DEFAULT_PARAM = {
     "objective": "regression",
@@ -17,50 +17,20 @@ DEFAULT_PARAM = {
 }
 
 
-def get_numerical_features(source: DataSource, target: str = "FVC") -> List[str]:
-    cat_features = ["Sex", "SmokingStatus"]
-    num_features = [
-        c
-        for c in source.df.columns
-        if (source.df.dtypes[c] != "object") & (c not in cat_features)
-    ]
-    features = num_features
-    drop_features = ["Patient_Week", target, "predict_Week", "base_Week"]
-    return [c for c in features if c not in drop_features]
-
-
-def run_single_lightgbm(
-    train_source: DataSource,
-    val_source: DataSource,
+def train(
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    fold_index: int,
+    n_fold: int,
     param: Optional[Dict[str, Any]] = None,
-    target: str = "FVC",
-    numerical_features: Optional[List[str]] = None,
-    categorical_features: Optional[List[str]] = None,
 ):
     if param is None:
         param = DEFAULT_PARAM
-    if categorical_features is None:
-        categorical_features = ["Sex", "SmokingStatus"]
-    if numerical_features is None:
-        numerical_features = get_numerical_features(train_source, target)
-    features= categorical_features + numerical_features
 
-    if categorical_features == []:
-        train_data = lgb.Dataset(
-            train_source.df[features], label=train_source.df[target]
-        )
-        val_data = lgb.Dataset(val_source.df[features], label=val_source.df[target])
-    else:
-        train_data = lgb.Dataset(
-            train_source.df[features],
-            label=train_source.df[target],
-            categorical_feature=categorical_features,
-        )
-        val_data = lgb.Dataset(
-            val_source.df[features],
-            label=val_source.df[target],
-            categorical_feature=categorical_features,
-        )
+    x_train, y_train = [np.vstack(d) for d in zip(*train_dataset)]
+    x_val, y_val = [np.vstack(d) for d in zip(*val_dataset)]
+    train_data = lgb.Dataset(x_train, label=np.squeeze(y_train))
+    val_data = lgb.Dataset(x_val, label=np.squeeze(y_val))
 
     num_round = 10000
     model = lgb.train(
@@ -71,4 +41,15 @@ def run_single_lightgbm(
         verbose_eval=100,
         early_stopping_rounds=100,
     )
-    return model
+
+    target_pred = model.predict(x_val, num_iteration=model.best_iteration)
+    target_pred_label = f"{train_dataset.target}_pred"
+    oof = pd.DataFrame(
+        {target_pred_label: target_pred}, index=val_dataset.source.df.index
+    )
+    return model, oof
+
+
+def infer(model, test_dataset: pd.DataFrame) -> pd.DataFrame:
+    test_pred = model.predict(test_dataset)
+    return pd.DataFrame({"prediction": test_pred}, index=test_dataset.source.df.index)

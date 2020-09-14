@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Optional
 
 import imageio as io
 import numpy as np
@@ -10,22 +11,28 @@ from .datasource import DataSource
 
 class TabularDataset(Dataset):
     def __init__(
-        self, source: DataSource, train: bool = True, target=None, features=None
-    ):
+        self,
+        source: DataSource,
+        train: bool = True,
+        target: Optional[str] = None,
+        features: Optional[List[str]] = None,
+        use_one_hot_encoding: bool = False,
+    ) -> None:
         self.source = source
         self.train = train
+        self.use_one_hot_encoding = use_one_hot_encoding
 
         if target is None:
-            self.target = self.get_target_column()
+            self.target = self.get_default_target_column()
         else:
             self.target = target
 
         if features is None:
-            self.features = self.get_feature_columns()
+            self.features = self.get_default_feature_columns()
         else:
             self.features = features
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> np.ndarray:
         meta = np.array(
             self.source.df.iloc[index][self.features].values, dtype=np.float32
         )
@@ -35,17 +42,15 @@ class TabularDataset(Dataset):
         else:
             return meta
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.source.df)
 
-    @classmethod
-    def get_target_column(cls):
+    def get_default_target_column(self) -> str:
         return "FVC"
 
-    @classmethod
-    def get_feature_columns(cls, use_one_hot_encoding: bool = False):
+    def get_default_feature_columns(self) -> List[str]:
         smoking_status_featues = ["SmokingStatus"]
-        if use_one_hot_encoding:
+        if self.use_one_hot_encoding:
             smoking_status_featues = [
                 "SmokingStatus_Currently smokes",
                 "SmokingStatus_Ex-smoker",

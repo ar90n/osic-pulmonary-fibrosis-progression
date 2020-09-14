@@ -23,9 +23,7 @@ def _prepare_folds(train_df: pd.DataFrame) -> pd.DataFrame:
     return train_df
 
 
-def load_osic_pulmonary_fibrosis_progression_csv(
-    use_pseudo_baselines: bool = False
-):
+def load_osic_pulmonary_fibrosis_progression_csv(use_pseudo_baselines: bool = False):
     (
         train_df,
         test_df,
@@ -105,9 +103,7 @@ def load_osic_pulmonary_fibrosis_progression_csv(
         [train_df["SmokingStatus"], test_df["SmokingStatus"]], ignore_index=True
     )
     dummies = pd.get_dummies(concat, dtype=np.uint8, prefix="SmokingStatus")
-    train_df = pd.concat(
-        [train_df, dummies.iloc[: train_df.shape[0]]], axis=1
-    )
+    train_df = pd.concat([train_df, dummies.iloc[: train_df.shape[0]]], axis=1)
     test_df = pd.concat(
         [test_df, dummies.iloc[train_df.shape[0] :].reset_index(drop=True)], axis=1
     )
@@ -143,16 +139,14 @@ def load_osic_pulmonary_fibrosis_progression_csv_dataframe() -> Tuple[
     return train_df, test_df, submission_df
 
 
-def save_result(
-    result: pd.DataFrame, dst_path: Path = Path("./submission.csv")
-) -> None:
+def save_result(result: DataSource, dst_path: Path = Path("./submission.csv")) -> None:
     submission_csv_path = (
         get_osic_pulmonary_fibrosis_progression_root() / "sample_submission.csv"
     )
     submission_df = cast(pd.DataFrame, pd.read_csv(submission_csv_path))
 
     sub = submission_df.drop(columns=["FVC", "Confidence"]).merge(
-        result[["Patient_Week", "FVC_pred", "Confidence"]], on="Patient_Week"
+        result.df[["Patient_Week", "FVC_pred", "Confidence"]], on="Patient_Week"
     )
     sub.columns = submission_df.columns
     sub.to_csv("submission.csv", index=False)

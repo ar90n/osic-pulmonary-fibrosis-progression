@@ -30,6 +30,7 @@ kkt = "^0.3.7"
 jupyter = "^1.0.0"
 jupytext = "^1.5.1"
 jupyter_nbextensions_configurator = "^0.4.1"
+seaborn = "^0.11.0"
 
 [tool.kkt]
 enable_git_tag = false

@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union, cast
 
 import pandas as pd
-from sklearn.model_selection import GroupKFold
+from sklearn.model_selection import KFold
 
 
 @dataclass
