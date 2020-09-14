@@ -21,7 +21,7 @@
 import numpy as np
 
 # %%
-from osic_pulmonary_fibrosis_progress import io, datasource, lightgbm, dataset, task, config, metric
+from osic_pulmonary_fibrosis_progression import io, datasource, lightgbm, dataset, task, config, metric
 
 # %%
 conf = config.Config()
