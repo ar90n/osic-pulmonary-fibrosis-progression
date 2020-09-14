@@ -20,7 +20,7 @@ version = "1.4.4"
 [[package]]
 category = "dev"
 description = "Disable App Nap on OS X 10.9"
-marker = "python_version >= \"3.3\" and sys_platform == \"darwin\" or platform_system == \"Darwin\""
+marker = "sys_platform == \"darwin\" or platform_system == \"Darwin\" or python_version >= \"3.3\" and sys_platform == \"darwin\""
 name = "appnope"
 optional = false
 python-versions = "*"
@@ -68,7 +68,6 @@ tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0
 [[package]]
 category = "dev"
 description = "Specifications for callback functions passed in to an API"
-marker = "python_version >= \"3.3\""
 name = "backcall"
 optional = false
 python-versions = "*"
@@ -237,7 +236,7 @@ oauth2client = "*"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "python_version >= \"3.3\" and sys_platform == \"win32\""
+marker = "python_version >= \"3.3\" and sys_platform == \"win32\" or sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -289,7 +288,6 @@ six = "*"
 [[package]]
 category = "dev"
 description = "Decorators for Humans"
-marker = "python_version >= \"3.3\""
 name = "decorator"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
@@ -658,7 +656,6 @@ requirements_deprecated_finder = ["pipreqs", "pip-api"]
 [[package]]
 category = "dev"
 description = "An autocompletion tool for Python that can be used for text editors."
-marker = "python_version >= \"3.3\""
 name = "jedi"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -1293,7 +1290,6 @@ ptyprocess = ">=0.5"
 [[package]]
 category = "dev"
 description = "Tiny 'shelve'-like database with concurrency support"
-marker = "python_version >= \"3.3\""
 name = "pickleshare"
 optional = false
 python-versions = "*"
@@ -1817,6 +1813,14 @@ version = "1.0.1"
 
 [[package]]
 category = "main"
+description = "SimpleITK is a simplified interface to the Insight Toolkit (ITK) for image registration and segmentation"
+name = "simpleitk"
+optional = false
+python-versions = "*"
+version = "1.2.4"
+
+[[package]]
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -2173,7 +2177,7 @@ notebook = ">=4.4.1"
 [[package]]
 category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\")"
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -2184,7 +2188,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "e2ed600e992b57f8f96503df815f53e8b7b73e157c76fbc91d7c36f869026b44"
+content-hash = "646fe663962985b849a6b540a40b3587c48d86797e9107189d376c77d9f83171"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -3185,6 +3189,37 @@ shellingham = [
 shortuuid = [
     {file = "shortuuid-1.0.1-py3-none-any.whl", hash = "sha256:492c7402ff91beb1342a5898bd61ea953985bf24a41cd9f247409aa2e03c8f77"},
     {file = "shortuuid-1.0.1.tar.gz", hash = "sha256:3c11d2007b915c43bee3e10625f068d8a349e04f0d81f08f5fa08507427ebf1f"},
+]
+simpleitk = [
+    {file = "SimpleITK-1.2.4-cp27-cp27m-macosx_10_6_x86_64.whl", hash = "sha256:1be0eb4f33f99618829a94bd86e850df1203edbbd13ccca91f2f4e3937b99f44"},
+    {file = "SimpleITK-1.2.4-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:bfc2efde7474bcd406c12830a30099a6fec129114aa670063ba95b1989bafe6b"},
+    {file = "SimpleITK-1.2.4-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:41103b814c4f1fed7f6d3c96a11426c35d20d0983e2534de1795c7e4481efc14"},
+    {file = "SimpleITK-1.2.4-cp27-cp27m-win32.whl", hash = "sha256:cf1ede8cf5aaa6ba714604a4a9bd22238499b40489caee2ad59c0c9e9c741a44"},
+    {file = "SimpleITK-1.2.4-cp27-cp27m-win_amd64.whl", hash = "sha256:a9acfa5c79229086b38bb710adf3a3588b7c5c5949f1053898762a484ceed2aa"},
+    {file = "SimpleITK-1.2.4-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:695561d683da3c0d7f009d700e860a885d8dd2ded487fcbfe444c3e54c6bdfb5"},
+    {file = "SimpleITK-1.2.4-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:d69aecb47550e2c50b05db889546b8c5b780336057cbd9771a2ac20a04118fb5"},
+    {file = "SimpleITK-1.2.4-cp34-cp34m-manylinux1_i686.whl", hash = "sha256:a24729c714eeaa1a6c29df3ffb6e1928d2f4b7556a5790728fa5ab766dcd153d"},
+    {file = "SimpleITK-1.2.4-cp34-cp34m-manylinux1_x86_64.whl", hash = "sha256:69a6e0781ea419efb4340b26c65edf977e18a4c9d296d82ecc733efc3f9ca082"},
+    {file = "SimpleITK-1.2.4-cp35-cp35m-macosx_10_6_x86_64.whl", hash = "sha256:cfbb53a2c6a9de22884baec878ed7847229e9e2060fe221951290dd5cbb91867"},
+    {file = "SimpleITK-1.2.4-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:2bc13c4566f34a255e7041633a358f4050b5ef0aefde957033f846429a957bb1"},
+    {file = "SimpleITK-1.2.4-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:124482011dedef350860ed0d76dcf9cd35d75455d424a2922e6c8d527c716fd6"},
+    {file = "SimpleITK-1.2.4-cp35-cp35m-win32.whl", hash = "sha256:95601f4fb95336fb0ccd7c93dba5888760fb8ff614aba8a255176722ce03e7d9"},
+    {file = "SimpleITK-1.2.4-cp35-cp35m-win_amd64.whl", hash = "sha256:cb23db770935eb63c99961862fca21a8daef394cc570e928a780d657d91506a6"},
+    {file = "SimpleITK-1.2.4-cp36-cp36m-macosx_10_6_x86_64.whl", hash = "sha256:3f5df96c52392d83fbf9abd47b542e01a9bcaacfb7ca40bae218701038b94c4b"},
+    {file = "SimpleITK-1.2.4-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:ff94f4f48533f827b0f9d589f6a38a28aa0fd4ca8a9ba3c4ee50f31f1ce5ad14"},
+    {file = "SimpleITK-1.2.4-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:9efe874383b159a06a5b7845dbca4dfa8ba7d620bc9c0d2fd2e6e52b74ab6890"},
+    {file = "SimpleITK-1.2.4-cp36-cp36m-win32.whl", hash = "sha256:1ebc7961008f6926163d803ca42eec251e87e3601c16cfd7b95147d6ea8857a0"},
+    {file = "SimpleITK-1.2.4-cp36-cp36m-win_amd64.whl", hash = "sha256:6bf3d32db2b3d9da0ffb2d988bb6d75e86afd6b54a51a6828d4a7ba98117ab7a"},
+    {file = "SimpleITK-1.2.4-cp37-cp37m-macosx_10_6_x86_64.whl", hash = "sha256:bdc1521ee7e197e8019b80abc8039790a170c6ea1b76f091fbe424a56327afbf"},
+    {file = "SimpleITK-1.2.4-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:dc52a622d4ec6accb2179a405553aaac61157e2691b16b33563498c5c7d9ee51"},
+    {file = "SimpleITK-1.2.4-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:884857528ad1d710f44429cc78c580ee5c51f0a5bbb205a4ed10012d722cfde5"},
+    {file = "SimpleITK-1.2.4-cp37-cp37m-win32.whl", hash = "sha256:56c03426f48107624c16ce13ecf689a55d7c5b170dd0096bda6494f1d52b5fa5"},
+    {file = "SimpleITK-1.2.4-cp37-cp37m-win_amd64.whl", hash = "sha256:53e06515eae75baa7c6ad0a205206fa1835f5d57d9afb1996ed0b49f31133d8f"},
+    {file = "SimpleITK-1.2.4-cp38-cp38-macosx_10_6_x86_64.whl", hash = "sha256:74c2467f8c755076e49416e6c07d195bdfc06ea39b6143ceda19460e0d8c9e0b"},
+    {file = "SimpleITK-1.2.4-cp38-cp38-manylinux1_i686.whl", hash = "sha256:bb41e103381981404bee82cf884c56b22633e7c8d29984c1bb2aa1bbe32f6a06"},
+    {file = "SimpleITK-1.2.4-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:3ca6e5f798121bb4c86214a480f74c9211d8d9def7081778083ed97502f37892"},
+    {file = "SimpleITK-1.2.4-cp38-cp38-win32.whl", hash = "sha256:859421aded539f96c022c289120db21cf7e9dadf59652e52dcc18d87c5cd70e4"},
+    {file = "SimpleITK-1.2.4-cp38-cp38-win_amd64.whl", hash = "sha256:0d5b60a090bd978b63238a77b97e4aaf109499048ff7a50b23c0dc9159abfb37"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},

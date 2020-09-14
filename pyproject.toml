@@ -21,6 +21,7 @@ cloud-tpu-client = "^0.10"
 category_encoders = "^2.2.2"
 lightgbm = "^3.0.0"
 pydicom = "^2.0.0"
+SimpleITK = "^1.2.4"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
