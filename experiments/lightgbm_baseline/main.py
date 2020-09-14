@@ -27,7 +27,7 @@ from osic_pulmonary_fibrosis_progression import io, datasource, lightgbm, datase
 conf = config.Config()
 
 # %%
-all_source, test_source = io.load_osic_pulmonary_fibrosis_progression_csv()
+all_source, test_source = io.load_osic_pulmonary_fibrosis_progression_csv(use_pseudo_baselines=True)
 
 # %%
 train_source, val_source = datasource.train_validate_split(all_source)
