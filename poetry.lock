@@ -20,7 +20,7 @@ version = "1.4.4"
 [[package]]
 category = "dev"
 description = "Disable App Nap on OS X 10.9"
-marker = "sys_platform == \"darwin\" or platform_system == \"Darwin\" or python_version >= \"3.3\" and sys_platform == \"darwin\""
+marker = "python_version >= \"3.3\" and sys_platform == \"darwin\" or platform_system == \"Darwin\""
 name = "appnope"
 optional = false
 python-versions = "*"
@@ -68,6 +68,7 @@ tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0
 [[package]]
 category = "dev"
 description = "Specifications for callback functions passed in to an API"
+marker = "python_version >= \"3.3\""
 name = "backcall"
 optional = false
 python-versions = "*"
@@ -236,7 +237,7 @@ oauth2client = "*"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "python_version >= \"3.3\" and sys_platform == \"win32\" or sys_platform == \"win32\""
+marker = "python_version >= \"3.3\" and sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -288,6 +289,7 @@ six = "*"
 [[package]]
 category = "dev"
 description = "Decorators for Humans"
+marker = "python_version >= \"3.3\""
 name = "decorator"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
@@ -656,6 +658,7 @@ requirements_deprecated_finder = ["pipreqs", "pip-api"]
 [[package]]
 category = "dev"
 description = "An autocompletion tool for Python that can be used for text editors."
+marker = "python_version >= \"3.3\""
 name = "jedi"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -920,7 +923,7 @@ description = "A tool for kaggle kernel"
 name = "kkt"
 optional = false
 python-versions = ">=3.7,<4.0"
-version = "0.3.8"
+version = "0.3.9"
 
 [package.dependencies]
 click = ">=7.0,<8.0"
@@ -1060,7 +1063,7 @@ description = "Converting Jupyter Notebooks"
 name = "nbconvert"
 optional = false
 python-versions = ">=3.6"
-version = "6.0.1"
+version = "6.0.2"
 
 [package.dependencies]
 bleach = "*"
@@ -1231,6 +1234,7 @@ version = "1.4.2"
 [[package]]
 category = "dev"
 description = "A Python Parser"
+marker = "python_version >= \"3.3\""
 name = "parso"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -1289,6 +1293,7 @@ ptyprocess = ">=0.5"
 [[package]]
 category = "dev"
 description = "Tiny 'shelve'-like database with concurrency support"
+marker = "python_version >= \"3.3\""
 name = "pickleshare"
 optional = false
 python-versions = "*"
@@ -1480,7 +1485,7 @@ description = "Pygments is a syntax highlighting package written in Python."
 name = "pygments"
 optional = false
 python-versions = ">=3.5"
-version = "2.6.1"
+version = "2.7.0"
 
 [[package]]
 category = "dev"
@@ -1772,7 +1777,7 @@ description = "Python client for Sentry (https://sentry.io)"
 name = "sentry-sdk"
 optional = false
 python-versions = "*"
-version = "0.17.4"
+version = "0.17.5"
 
 [package.dependencies]
 certifi = "*"
@@ -2023,7 +2028,7 @@ description = "Fast, Extensible Progress Meter"
 name = "tqdm"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
-version = "4.48.2"
+version = "4.49.0"
 
 [package.extras]
 dev = ["py-make (>=0.1.0)", "twine", "argopt", "pydoc-markdown"]
@@ -2168,7 +2173,7 @@ notebook = ">=4.4.1"
 [[package]]
 category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\")"
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\""
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -2179,7 +2184,8 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "3d2d224037d34a2564b0b19ceaaeb99afe9b81d6d37340b7d10519b81768ea4d"
+content-hash = "e2ed600e992b57f8f96503df815f53e8b7b73e157c76fbc91d7c36f869026b44"
+lock-version = "1.0"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -2557,8 +2563,8 @@ kiwisolver = [
     {file = "kiwisolver-1.2.0.tar.gz", hash = "sha256:247800260cd38160c362d211dcaf4ed0f7816afb5efe56544748b21d6ad6d17f"},
 ]
 kkt = [
-    {file = "kkt-0.3.8-py3-none-any.whl", hash = "sha256:e709fde2dfa4198543d62a350c202c27a69b3777e3758f792dd24c2c1a836773"},
-    {file = "kkt-0.3.8.tar.gz", hash = "sha256:69fec67a554cb482acef70489ba9913f6d00cffe95e7cc1d2192e392613c81ac"},
+    {file = "kkt-0.3.9-py3-none-any.whl", hash = "sha256:52ce6c306b81c6c31a6fefb794f8443fe452dff1063eaf2e12f8a1b18070f0be"},
+    {file = "kkt-0.3.9.tar.gz", hash = "sha256:f4efe672eda776597a8de183d921f0018b1e4b44535e795948b0ccc8da0751ad"},
 ]
 lightgbm = [
     {file = "lightgbm-3.0.0-py2.py3-none-macosx_10_13_x86_64.macosx_10_14_x86_64.macosx_10_15_x86_64.whl", hash = "sha256:cb467a2ce270e543dfd5f309e8d9aebc2ede77b9466f0042a5a1b5d26eeb5ce4"},
@@ -2691,8 +2697,8 @@ nbclient = [
     {file = "nbclient-0.5.0.tar.gz", hash = "sha256:8ad52d27ba144fca1402db014857e53c5a864a2f407be66ca9d74c3a56d6591d"},
 ]
 nbconvert = [
-    {file = "nbconvert-6.0.1-py3-none-any.whl", hash = "sha256:970122eaf3a3ddcfe4e03514b219df4be4af09e70c748faf6ba96f51a25fd09b"},
-    {file = "nbconvert-6.0.1.tar.gz", hash = "sha256:db94117fbac29153834447e31b30cda337d4450e46e0bdb1a36eafbbf4435156"},
+    {file = "nbconvert-6.0.2-py3-none-any.whl", hash = "sha256:e3994dbcb8029c91425d945797135573b9efbd52278908685c7ae81f84280a2e"},
+    {file = "nbconvert-6.0.2.tar.gz", hash = "sha256:4cb5c66d04737a42076536fa64fa951e97cddbf4c517c418591314a3d14013dc"},
 ]
 nbformat = [
     {file = "nbformat-5.0.7-py3-none-any.whl", hash = "sha256:ea55c9b817855e2dfcd3f66d74857342612a60b1f09653440f4a5845e6e3523f"},
@@ -2970,8 +2976,8 @@ pydicom = [
     {file = "pydicom-2.0.0.tar.gz", hash = "sha256:594c91f715c415ef439f498351ae68fb770c776fc5aa72f3c87eb500dc2a7470"},
 ]
 pygments = [
-    {file = "Pygments-2.6.1-py3-none-any.whl", hash = "sha256:ff7a40b4860b727ab48fad6360eb351cc1b33cbf9b15a0f689ca5353e9463324"},
-    {file = "Pygments-2.6.1.tar.gz", hash = "sha256:647344a061c249a3b74e230c739f434d7ea4d8b1d5f3721bc0f3558049b38f44"},
+    {file = "Pygments-2.7.0-py3-none-any.whl", hash = "sha256:2df50d16b45b977217e02cba6c8422aaddb859f3d0570a88e09b00eafae89c6e"},
+    {file = "Pygments-2.7.0.tar.gz", hash = "sha256:2594e8fdb06fef91552f86f4fd3a244d148ab24b66042036e64f29a291515048"},
 ]
 pylev = [
     {file = "pylev-1.3.0-py2.py3-none-any.whl", hash = "sha256:1d29a87beb45ebe1e821e7a3b10da2b6b2f4c79b43f482c2df1a1f748a6e114e"},
@@ -3169,8 +3175,8 @@ send2trash = [
     {file = "Send2Trash-1.5.0.tar.gz", hash = "sha256:60001cc07d707fe247c94f74ca6ac0d3255aabcb930529690897ca2a39db28b2"},
 ]
 sentry-sdk = [
-    {file = "sentry-sdk-0.17.4.tar.gz", hash = "sha256:a16caf9ce892623081cbb9a95f6c1f892778bb123909b0ed7afdfb52ce7a58a1"},
-    {file = "sentry_sdk-0.17.4-py2.py3-none-any.whl", hash = "sha256:97bff68e57402ad39674e6fe2545df0d5eea41c3d51e280c170761705c8c20ff"},
+    {file = "sentry-sdk-0.17.5.tar.gz", hash = "sha256:02f2a72698453f722b102562eb6430d2a82d6c6c40f2b991ed69e7628142de6a"},
+    {file = "sentry_sdk-0.17.5-py2.py3-none-any.whl", hash = "sha256:02400b4aeb3db676611ff05442d4421766f18512509255590fa60acee5cb4c5c"},
 ]
 shellingham = [
     {file = "shellingham-1.3.2-py2.py3-none-any.whl", hash = "sha256:7f6206ae169dc1a03af8a138681b3f962ae61cc93ade84d0585cca3aaf770044"},
@@ -3284,8 +3290,8 @@ tornado = [
     {file = "tornado-6.0.4.tar.gz", hash = "sha256:0fe2d45ba43b00a41cd73f8be321a44936dc1aba233dee979f17a042b83eb6dc"},
 ]
 tqdm = [
-    {file = "tqdm-4.48.2-py2.py3-none-any.whl", hash = "sha256:1a336d2b829be50e46b84668691e0a2719f26c97c62846298dd5ae2937e4d5cf"},
-    {file = "tqdm-4.48.2.tar.gz", hash = "sha256:564d632ea2b9cb52979f7956e093e831c28d441c11751682f84c86fc46e4fd21"},
+    {file = "tqdm-4.49.0-py2.py3-none-any.whl", hash = "sha256:8f3c5815e3b5e20bc40463fa6b42a352178859692a68ffaa469706e6d38342a5"},
+    {file = "tqdm-4.49.0.tar.gz", hash = "sha256:faf9c671bd3fad5ebaeee366949d969dca2b2be32c872a7092a1e1a9048d105b"},
 ]
 traitlets = [
     {file = "traitlets-5.0.4-py3-none-any.whl", hash = "sha256:9664ec0c526e48e7b47b7d14cd6b252efa03e0129011de0a9c1d70315d4309c3"},
