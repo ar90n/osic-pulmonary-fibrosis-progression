@@ -24,6 +24,17 @@ class Slice:
     metadata: Metadata
 
 
+@dataclass
+class Stack:
+    pixel_array: np.ndarray
+    metadata: Metadata
+
+
+def _is_valid_slice(s: Slice) -> bool:
+    image_type = s.metadata.image_type
+    return image_type[0] == "ORIGINAL" and image_type[2] != "LOCALIZER"
+
+
 class TabularDataset(Dataset):
     def __init__(
         self,
@@ -132,10 +143,37 @@ class CTDataset(Dataset):
         pixel_array = self._flip_if_need(pixel_array, dcm)
         return Slice(pixel_array, metadata)
 
+    def _sort_and_filter_slices(self, slices: List[Slice]) -> List[Slice]:
+        slices = [s for s in slices if _is_valid_slice(s)]
+        return sorted(slices, key=lambda s: s.metadata.location)
+
+    def _validate(self, slices: List[Slice]) -> bool:
+        if len(slices) == 0:
+            raise ValueError("Input slices are empty")
+
+        shapes = []
+        spacings = []
+        for s in slices:
+            shapes.append(s.pixel_array.shape)
+            spacings.append(s.metadata.pixel_spacing)
+        if len(set(shapes)) != 1:
+            raise ValueError("non-uniform shape slices")
+        if len(set(spacings)) != 1:
+            raise ValueError("non-uniform spacing slices")
+
     def _load_stack(self, root: Path):
-        dcm_stack = [self._load_dcm(p) for p in root.glob("*.dcm")]
-        dcm_stack.sort(key=lambda x: x.metadata.location)
-        return dcm_stack
+        dcm_slices = [self._load_dcm(p) for p in root.glob("*.dcm")]
+        dcm_slices = self._sort_and_filter_slices(dcm_slices)
+        self._validate(dcm_slices)
+
+        stacked_pixel_array = np.stack([s.pixel_array for s in dcm_slices], axis=0)
+        stacked_locations = np.hstack([s.metadata.location for s in dcm_slices]).ravel()
+        metadata = Metadata(
+            location=stacked_locations,
+            pixel_spacing=dcm_slices[0].metadata.pixel_spacing,
+            image_type=dcm_slices[0].metadata.image_type,
+        )
+        return Stack(stacked_pixel_array, metadata)
 
     def __getitem__(self, index: int) -> np.ndarray:
         img_root = self.get_img_root(index)
