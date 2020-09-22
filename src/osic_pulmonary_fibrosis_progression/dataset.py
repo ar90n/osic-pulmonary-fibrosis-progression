@@ -1,6 +1,6 @@
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Optional, Any, Callable
+from typing import List, Optional, Any, Callable, Mapping
 from functools import lru_cache
 import imageio as io
 import numpy as np
@@ -27,7 +27,7 @@ class Slice:
 @dataclass
 class Stack:
     pixel_array: np.ndarray
-    metadata: Metadata
+    metadata: Mapping[str, Any]
 
 
 def _is_valid_slice(s: Slice) -> bool:
@@ -168,11 +168,11 @@ class CTDataset(Dataset):
 
         stacked_pixel_array = np.stack([s.pixel_array for s in dcm_slices], axis=0)
         stacked_locations = np.hstack([s.metadata.location for s in dcm_slices]).ravel()
-        metadata = Metadata(
-            location=stacked_locations,
-            pixel_spacing=dcm_slices[0].metadata.pixel_spacing,
-            image_type=dcm_slices[0].metadata.image_type,
-        )
+        metadata = {
+            "locations": stacked_locations,
+            "pixel_spacing": dcm_slices[0].metadata.pixel_spacing,
+            "image_type": dcm_slices[0].metadata.image_type,
+        }
         return Stack(stacked_pixel_array, metadata)
 
     def __getitem__(self, index: int) -> np.ndarray:
