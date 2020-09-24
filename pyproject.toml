@@ -42,7 +42,7 @@ secret_keys = ["WANDB_API_KEY"]
 [tool.kkt.meta_data]
 code_file = "experiments/lightgbm_baseline/main.py"
 competition_sources = ["osic-pulmonary-fibrosis-progression"]
-dataset_sources = []
+dataset_sources = ["ar90ngas/my-osic2020-data"]
 enable_gpu = false
 enable_internet = false
 is_private = true
