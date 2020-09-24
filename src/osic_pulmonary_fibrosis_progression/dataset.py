@@ -30,9 +30,15 @@ class Stack:
     metadata: Mapping[str, Any]
 
 
+@dataclass
+class Record:
+    pixel_array: np.ndarray
+    metadata: Mapping[str, Any]
+    tabular: np.ndarray
+
+
 def _is_valid_slice(s: Slice) -> bool:
-    image_type = s.metadata.image_type
-    return image_type[0] == "ORIGINAL" and image_type[2] != "LOCALIZER"
+    return "AXIAL" in s.metadata.image_type
 
 
 class TabularDataset(Dataset):
@@ -108,7 +114,7 @@ class CTDataset(Dataset):
         self.train = train
 
         if transforms is not None:
-            transforms = lru_cache(maxsize=2048)(transforms)
+            transforms = transforms
         self.transforms = transforms
 
         if target is None:
@@ -161,6 +167,7 @@ class CTDataset(Dataset):
         if len(set(spacings)) != 1:
             raise ValueError("non-uniform spacing slices")
 
+    @lru_cache()
     def _load_stack(self, root: Path):
         dcm_slices = [self._load_dcm(p) for p in root.glob("*.dcm")]
         dcm_slices = self._sort_and_filter_slices(dcm_slices)
@@ -173,7 +180,11 @@ class CTDataset(Dataset):
             "pixel_spacing": dcm_slices[0].metadata.pixel_spacing,
             "image_type": dcm_slices[0].metadata.image_type,
         }
-        return Stack(stacked_pixel_array, metadata)
+        stack = Stack(stacked_pixel_array, metadata)
+        if self.transforms:
+            stack = self.transforms(stack)
+
+        return stack
 
     def __getitem__(self, index: int) -> np.ndarray:
         img_root = self.get_img_root(index)
@@ -181,16 +192,15 @@ class CTDataset(Dataset):
 
         patient_img_path = img_root / cur_row["Patient"]
         stack = self._load_stack(patient_img_path)
-        if self.transforms:
-            stack = self.transforms(stack)
 
         tabular = np.array(cur_row[self.features].values, dtype=np.float32)
 
+        record = Record(stack.pixel_array, stack.metadata, tabular)
         if self.train:
             y = cur_row[self.target]
-            return (stack, tabular), y
+            return record, y
         else:
-            return (stack, tabular)
+            return record
 
     def get_img_root(self, index: int):
         return self.source.roots
