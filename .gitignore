@@ -158,4 +158,4 @@ wandb
 
 .env.sh
 tpu
-.ipynb
+*.ipynb
