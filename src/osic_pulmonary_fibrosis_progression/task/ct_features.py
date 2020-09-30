@@ -93,7 +93,7 @@ def train_all_folds(
     config: Config,
     all_source: DataSource,
     n_fold: int = 8,
-    n_workers: Optional[int] = 1,
+    n_workers: Optional[int] = 4,
     transforms: Optional[Callable] = None,
     target: Optional[str] = None,
     features: Optional[List[str]] = None,
