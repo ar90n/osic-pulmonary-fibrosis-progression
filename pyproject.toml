@@ -57,6 +57,9 @@ slug = "osic-pulmonary-fibrosis-progression"
     [tool.kkt.meta_data.experiments.lightgbm_baseline]
     code_file = "experiments/lightgbm_baseline/main.py"
 
+    [tool.kkt.meta_data.experiments.lightgbm_with_ct_features]
+    code_file = "experiments/lightgbm_with_ct_features/main.py"
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
