@@ -7,12 +7,17 @@ import numpy as np
 
 from .util import cache
 
-_LUNGMASK_WEIGHTS_ROOT = Path(
-    os.environ.get("LUNGMASK_WEIGHTS_ROOT", "../input/my-osic2020-data")
-)
-_R231_PTH_PATH = _LUNGMASK_WEIGHTS_ROOT / "unet_r231-d5d2fc3d.pth"
 
-mask.model_urls[("unet", "R231")] = (str(_R231_PTH_PATH), 3)
+def _patch() -> None:
+    _LUNGMASK_WEIGHTS_ROOT = Path(
+        os.environ.get("LUNGMASK_WEIGHTS_ROOT", "../input/my-osic2020-data")
+    )
+    _R231_PTH_PATH = _LUNGMASK_WEIGHTS_ROOT / "unet_r231-d5d2fc3d.pth"
+
+    mask.model_urls[("unet", "R231")] = (f"file://{str(_R231_PTH_PATH.resolve())}", 3)
+
+
+_patch()
 
 
 @cache
