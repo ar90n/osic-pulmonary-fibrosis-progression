@@ -1,33 +1,15 @@
+import sys
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Optional, Any, Callable, Mapping
+from typing import List, Optional, Any, Callable, Mapping, cast, Union, Tuple
 from functools import lru_cache
 import imageio as io
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from pydicom import dcmread
 
 from .datasource import DataSource
-
-
-@dataclass
-class Metadata:
-    location: float
-    pixel_spacing: np.ndarray
-    image_type: Any
-
-
-@dataclass
-class Slice:
-    pixel_array: np.ndarray
-    metadata: Metadata
-
-
-@dataclass
-class Stack:
-    pixel_array: np.ndarray
-    metadata: Mapping[str, Any]
+from .dcm import load_stack
 
 
 @dataclass
@@ -37,44 +19,89 @@ class Record:
     tabular: np.ndarray
 
 
-def _is_valid_slice(s: Slice) -> bool:
-    return "AXIAL" in s.metadata.image_type
-
-
-class TabularDataset(Dataset):
+class CTDataset(Dataset):
     def __init__(
         self,
-        source: DataSource,
+        source,
         train: bool = True,
+        transforms: Optional[Callable] = None,
         target: Optional[str] = None,
         features: Optional[List[str]] = None,
         use_one_hot_encoding: bool = False,
+        use_ct_data: bool = True,
     ) -> None:
         self.source = source
         self.train = train
 
+        if transforms is not None:
+            transforms = transforms
+        self.transforms = transforms
+
         if target is None:
-            self.target = self.get_default_target_column()
-        else:
-            self.target = target
+            target = self.get_default_target_column()
+        self.target = target
 
         if features is None:
-            self.features = self.get_default_feature_columns(use_one_hot_encoding)
-        else:
-            self.features = features
+            features = self.get_default_feature_columns(use_one_hot_encoding)
+        self._tabular_features = features
 
-    def __getitem__(self, index: int) -> np.ndarray:
-        tabular = np.array(
-            self.source.df.iloc[index][self.features].values, dtype=np.float32
-        )
+        self.use_ct_data = use_ct_data
+
+    def __getitem__(self, index: int) -> Union[Record, Tuple[Record, float]]:
+        img_root = self.get_img_root(index)
+        cur_row = self.source.df.iloc[index]
+
+        pixel_array = np.empty(0)
+        metadata = {}
+        tabular = np.array(cur_row[self._tabular_features].values, dtype=np.float32)
+        if self.use_ct_data:
+            patient_img_path = img_root / cur_row["Patient"]
+            stack = load_stack(patient_img_path)
+            if self.transforms:
+                stack = self.transforms(stack)
+            pixel_array = stack.pixel_array
+            metadata = stack.metadata
+            tabular = self._get_concatenated(stack.metadata, tabular)
+
+        record = Record(pixel_array, metadata, tabular)
         if self.train:
-            y = self.source.df.iloc[index][self.target]
-            return tabular, y
+            y = cur_row[self.target]
+            return record, y
         else:
-            return tabular
+            return record
+
+    def _get_metadata_feature_keys(
+        self, metadata: Optional[Mapping[str, Any]] = None
+    ) -> List[str]:
+        if metadata is None:
+            ret = self.__getitem__(0)
+            metadata = ret[0].metadata if self.train else ret.metadata
+
+        keys = sorted(
+            [
+                k
+                for k, v in metadata.items()
+                if type(v) == float or type(v) == np.float64
+            ]
+        )
+        return keys
+
+    def _get_concatenated(
+        self, metadata: Mapping[str, Any], tabular: np.ndarray
+    ) -> np.ndarray:
+        metadata_feature_keys = self._get_metadata_feature_keys(metadata)
+        metadata_features = np.array([metadata[k] for k in metadata_feature_keys])
+        return np.concatenate([tabular, metadata_features])
+
+    def get_img_root(self, index: int):
+        return self.source.roots
 
     def __len__(self) -> int:
         return len(self.source.df)
+
+    @property
+    def features(self) -> List[str]:
+        return [*self._tabular_features, *self._get_metadata_feature_keys()]
 
     @classmethod
     def get_default_target_column(cls) -> str:
@@ -98,112 +125,3 @@ class TabularDataset(Dataset):
             "Week_passed",
             *smoking_status_featues,
         ]
-
-
-class CTDataset(Dataset):
-    def __init__(
-        self,
-        source,
-        train: bool = True,
-        transforms: Optional[Callable] = None,
-        target: Optional[str] = None,
-        features: Optional[List[str]] = None,
-        use_one_hot_encoding: bool = False,
-    ) -> None:
-        self.source = source
-        self.train = train
-
-        if transforms is not None:
-            transforms = transforms
-        self.transforms = transforms
-
-        if target is None:
-            target = TabularDataset.get_default_target_column()
-        self.target = target
-
-        if features is None:
-            features = TabularDataset.get_default_feature_columns(use_one_hot_encoding)
-        self.features = features
-
-    def _ct_order(self, dcm):
-        return dcm.ImagePositionPatient[-1]
-
-    def _ct_rescale(self, pixel_array: np.ndarray, dcm):
-        intercept = dcm.RescaleIntercept if hasattr(dcm, "RescaleIntercept") else 0
-        slope = dcm.RescaleSlope if hasattr(dcm, "RescaleSlope") else 1
-        return (pixel_array * slope + intercept).astype(np.int16)
-
-    def _flip_if_need(self, pixel_array: np.ndarray, dcm):
-        return np.flip(
-            pixel_array,
-            np.where(np.array(dcm.ImageOrientationPatient)[[0, 4]][::-1] < 0)[0],
-        )
-
-    def _load_dcm(self, dcm_path: Path):
-        dcm = dcmread(dcm_path)
-        metadata = Metadata(
-            dcm.ImagePositionPatient[-1], dcm.PixelSpacing[0], dcm.ImageType,
-        )
-        pixel_array = dcm.pixel_array
-        pixel_array = self._ct_rescale(pixel_array, dcm)
-        pixel_array = self._flip_if_need(pixel_array, dcm)
-        return Slice(pixel_array, metadata)
-
-    def _sort_and_filter_slices(self, slices: List[Slice]) -> List[Slice]:
-        slices = [s for s in slices if _is_valid_slice(s)]
-        return sorted(slices, key=lambda s: s.metadata.location)
-
-    def _validate(self, slices: List[Slice]) -> bool:
-        if len(slices) == 0:
-            raise ValueError("Input slices are empty")
-
-        shapes = []
-        spacings = []
-        for s in slices:
-            shapes.append(s.pixel_array.shape)
-            spacings.append(s.metadata.pixel_spacing)
-        if len(set(shapes)) != 1:
-            raise ValueError("non-uniform shape slices")
-        if len(set(spacings)) != 1:
-            raise ValueError("non-uniform spacing slices")
-
-    @lru_cache()
-    def _load_stack(self, root: Path):
-        dcm_slices = [self._load_dcm(p) for p in root.glob("*.dcm")]
-        dcm_slices = self._sort_and_filter_slices(dcm_slices)
-        self._validate(dcm_slices)
-
-        stacked_pixel_array = np.stack([s.pixel_array for s in dcm_slices], axis=0)
-        stacked_locations = np.hstack([s.metadata.location for s in dcm_slices]).ravel()
-        metadata = {
-            "locations": stacked_locations,
-            "pixel_spacing": dcm_slices[0].metadata.pixel_spacing,
-            "image_type": dcm_slices[0].metadata.image_type,
-        }
-        stack = Stack(stacked_pixel_array, metadata)
-        if self.transforms:
-            stack = self.transforms(stack)
-
-        return stack
-
-    def __getitem__(self, index: int) -> np.ndarray:
-        img_root = self.get_img_root(index)
-        cur_row = self.source.df.iloc[index]
-
-        patient_img_path = img_root / cur_row["Patient"]
-        stack = self._load_stack(patient_img_path)
-
-        tabular = np.array(cur_row[self.features].values, dtype=np.float32)
-
-        record = Record(stack.pixel_array, stack.metadata, tabular)
-        if self.train:
-            y = cur_row[self.target]
-            return record, y
-        else:
-            return record
-
-    def get_img_root(self, index: int):
-        return self.source.roots
-
-    def __len__(self) -> int:
-        return len(self.source.df)

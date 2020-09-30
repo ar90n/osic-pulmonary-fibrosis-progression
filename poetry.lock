@@ -287,6 +287,17 @@ six = "*"
 
 [[package]]
 category = "main"
+description = "Type stubs for Python machine learning libraries"
+name = "data-science-types"
+optional = false
+python-versions = ">=3.6"
+version = "0.2.18"
+
+[package.extras]
+dev = ["black", "flake8", "flake8-pyi", "matplotlib", "mypy", "numpy", "pandas", "pytest"]
+
+[[package]]
+category = "main"
 description = "Decorators for Humans"
 name = "decorator"
 optional = false
@@ -1004,6 +1015,7 @@ tqdm = "*"
 reference = "c54c28c7e6e1fe224d41ca374623b39a667c3137"
 type = "git"
 url = "https://github.com/JoHof/lungmask"
+
 [[package]]
 category = "main"
 description = "Python implementation of Markdown."
@@ -2304,7 +2316,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "5bf5c9af54cdb0bfcbe29a8f37aa30bc59d36e1caca0beed4ee18943e3e9fc20"
+content-hash = "793ea9c7ec3aec464fa9965fcdb8072d03cfef650ee0b139936dc44a1d791286"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -2463,6 +2475,10 @@ cryptography = [
 cycler = [
     {file = "cycler-0.10.0-py2.py3-none-any.whl", hash = "sha256:1d8a5ae1ff6c5cf9b93e8811e581232ad8920aeec647c37316ceac982b08cb2d"},
     {file = "cycler-0.10.0.tar.gz", hash = "sha256:cd7b2d1018258d7247a71425e9f26463dfb444d411c39569972f4ce586b0c9d8"},
+]
+data-science-types = [
+    {file = "data-science-types-0.2.18.tar.gz", hash = "sha256:32f7f53f38286f60e753c062919ad9da7d7637276fa573cbd02cf0b08f707b05"},
+    {file = "data_science_types-0.2.18-py3-none-any.whl", hash = "sha256:4c127d222fd64ac15ce2a90a969b472d44b12df97d22115131bfcdba59694b45"},
 ]
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},

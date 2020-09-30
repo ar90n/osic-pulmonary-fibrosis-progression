@@ -1,28 +1,50 @@
 import sys
 from dataclasses import asdict
-from typing import Optional, Any, List, Tuple, Iterable
+from typing import Optional, Any, List, Tuple, Iterable, Callable
 from pathlib import Path
 import json
 from concurrent.futures import ThreadPoolExecutor
+from torchtoolbox import transform
 
 import pandas as pd
 import numpy as np
 
 from ..config import Config
 from ..datasource import DataSource, train_validate_split, get_folds_by, kfold_split
-from ..dataset import TabularDataset
+from ..dataset import CTDataset
 from ..lightgbm import train, infer
+from ..transforms import DropSlice, LungMask, DescribeVolume
 
 
 def get_original_label_of(oof: pd.DataFrame) -> str:
     return oof.columns[0][:-5]
 
 
-def train_splits(config: Config, all_source: DataSource):
-    train_source, val_source = train_validate_split(all_source)
+def train_splits(
+    config: Config,
+    all_source: DataSource,
+    transforms: Optional[Callable] = None,
+    use_one_hot_encoding: bool = False,
+    use_ct_data: bool = True,
+):
+    if transforms is None:
+        transforms = transform.Compose([DropSlice(), LungMask(), DescribeVolume()])
 
-    train_dataset = TabularDataset(train_source, train=True)
-    val_dataset = TabularDataset(val_source, train=True)
+    train_source, val_source = train_validate_split(all_source)
+    train_dataset = CTDataset(
+        train_source,
+        train=True,
+        transforms=transforms,
+        use_one_hot_encoding=use_one_hot_encoding,
+        use_ct_data=use_ct_data,
+    )
+    val_dataset = CTDataset(
+        val_source,
+        train=True,
+        transforms=transforms,
+        use_one_hot_encoding=use_one_hot_encoding,
+        use_ct_data=use_ct_data,
+    )
     model, oof = train(train_dataset, val_dataset, fold_index=1, n_fold=1)
 
     return model, oof
@@ -33,18 +55,33 @@ def train_nth_fold(
     all_source: DataSource,
     fold_index: int,
     n_fold: int,
+    transforms: Optional[Callable] = None,
     target: Optional[str] = None,
     features: Optional[List[str]] = None,
+    use_one_hot_encoding: bool = False,
+    use_ct_data: bool = True,
 ):
     if n_fold < 0 or 8 < n_fold:
         raise ValueError("n_fold must be best_model_path 1 with 8")
 
     train_source, val_source = get_folds_by(all_source, fold_index, n_fold)
-    train_dataset = TabularDataset(
-        train_source, train=True, target=target, features=features
+    train_dataset = CTDataset(
+        train_source,
+        train=True,
+        target=target,
+        features=features,
+        transforms=transforms,
+        use_one_hot_encoding=use_one_hot_encoding,
+        use_ct_data=use_ct_data,
     )
-    val_dataset = TabularDataset(
-        val_source, train=True, target=target, features=features
+    val_dataset = CTDataset(
+        val_source,
+        train=True,
+        target=target,
+        features=features,
+        transforms=transforms,
+        use_one_hot_encoding=use_one_hot_encoding,
+        use_ct_data=use_ct_data,
     )
 
     model, oof = train(train_dataset, val_dataset, fold_index=fold_index, n_fold=n_fold)
@@ -57,8 +94,11 @@ def train_all_folds(
     all_source: DataSource,
     n_fold: int = 8,
     n_workers: Optional[int] = 1,
+    transforms: Optional[Callable] = None,
     target: Optional[str] = None,
     features: Optional[List[str]] = None,
+    use_one_hot_encoding: bool = False,
+    use_ct_data: bool = True,
 ) -> Tuple[Tuple[Any], pd.DataFrame]:
     if n_workers is None:
         n_workers = n_fold
@@ -69,7 +109,16 @@ def train_all_folds(
         futures = []
         for fold_index in range(n_fold):
             future = executor.submit(
-                train_nth_fold, config, all_source, fold_index, n_fold, target, features
+                train_nth_fold,
+                config,
+                all_source,
+                fold_index,
+                n_fold,
+                transforms,
+                target,
+                features,
+                use_one_hot_encoding,
+                use_ct_data,
             )
             futures.append(future)
     models, oofs = zip(*[f.result() for f in futures])
@@ -89,8 +138,21 @@ def train_all_folds(
     return models, oof
 
 
-def infer_with_all_folds(config: Config, test_source: DataSource, models: Iterable):
-    test_dataset = TabularDataset(test_source, train=False)
+def infer_with_all_folds(
+    config: Config,
+    test_source: DataSource,
+    models: Iterable,
+    transforms: Optional[Callable] = None,
+    use_one_hot_encoding: bool = False,
+    use_ct_data: bool = True,
+):
+    test_dataset = CTDataset(
+        test_source,
+        train=False,
+        transforms=transforms,
+        use_one_hot_encoding=use_one_hot_encoding,
+        use_ct_data=use_ct_data,
+    )
     avg = pd.concat((infer(m, test_dataset) for m in models), axis="columns").mean(
         axis="columns"
     )

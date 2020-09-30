@@ -23,7 +23,9 @@ def _prepare_folds(train_df: pd.DataFrame) -> pd.DataFrame:
     return train_df
 
 
-def load_osic_pulmonary_fibrosis_progression_csv(use_pseudo_baselines: bool = False):
+def load_osic_pulmonary_fibrosis_progression_csv(
+    use_pseudo_baselines: bool = False, ignore_bad_ct: bool = False
+):
     (
         train_df,
         test_df,
@@ -113,6 +115,14 @@ def load_osic_pulmonary_fibrosis_progression_csv(use_pseudo_baselines: bool = Fa
     test_df["SmokingStatus"] = test_df["SmokingStatus"].map(
         {"Ex-smoker": 0, "Never smoked": 1, "Currently smokes": 2}
     )
+
+    if ignore_bad_ct:
+        train_df = train_df.drop(
+            train_df[train_df.Patient == "ID00011637202177653955184"].index
+        )
+        train_df = train_df.drop(
+            train_df[train_df.Patient == "ID00052637202186188008618"].index
+        )
 
     return (
         DataSource(train_df, train_img_roots, train_folds),

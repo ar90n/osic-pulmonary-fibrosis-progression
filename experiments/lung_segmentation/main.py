@@ -51,3 +51,5 @@ fig, (axL, axR) = plt.subplots(ncols=2, figsize=(10,4), sharex=True)
 axL.imshow(train_dataset[21][0].pixel_array[12,:,:])
 axR.imshow(train_dataset[21][0].metadata["mask"][12,:,:] == 1)
 fig.show()
+
+# %%

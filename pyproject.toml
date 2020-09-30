@@ -23,6 +23,8 @@ lightgbm = "^3.0.0"
 pydicom = "^2.0.0"
 SimpleITK = "^1.2.4"
 lungmask = {git = "https://github.com/JoHof/lungmask"}
+joblib = "^0.16.0"
+data-science-types = "^0.2.18"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

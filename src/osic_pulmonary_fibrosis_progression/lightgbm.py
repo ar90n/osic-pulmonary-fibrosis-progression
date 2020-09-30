@@ -14,6 +14,12 @@ DEFAULT_PARAM = {
     "seed": 42,
     "max_depth": -1,
     "verbosity": -1,
+    ##
+    "max_depth": 16,
+    "bagging_fraction": 0.9,
+    "feature_fraction": 0.9,
+    "bagging_freq": 0.1,
+    "lambda_l2": 0.01
 }
 
 
@@ -27,8 +33,12 @@ def train(
     if param is None:
         param = DEFAULT_PARAM
 
-    x_train, y_train = [np.vstack(d) for d in zip(*train_dataset)]
-    x_val, y_val = [np.vstack(d) for d in zip(*val_dataset)]
+    x_train, y_train = [
+        np.vstack(d) for d in zip(*((x.tabular, y) for x, y in train_dataset))
+    ]
+    x_val, y_val = [
+        np.vstack(d) for d in zip(*((x.tabular, y) for x, y in val_dataset))
+    ]
     train_data = lgb.Dataset(x_train, label=np.squeeze(y_train))
     val_data = lgb.Dataset(x_val, label=np.squeeze(y_val))
 
@@ -50,6 +60,7 @@ def train(
     return model, oof
 
 
-def infer(model, test_dataset: pd.DataFrame) -> pd.DataFrame:
-    test_pred = model.predict(test_dataset)
+def infer(model, test_dataset: Dataset) -> pd.DataFrame:
+    x_test = np.vstack((x.tabular for x in test_dataset))
+    test_pred = model.predict(x_test)
     return pd.DataFrame({"prediction": test_pred}, index=test_dataset.source.df.index)

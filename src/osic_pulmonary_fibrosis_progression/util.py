@@ -8,6 +8,7 @@ from typing import Iterable, Optional
 
 import torch
 from pytorch_lightning import seed_everything as pl_seed_evertything
+from joblib import Memory
 
 from .config import Config
 
@@ -18,6 +19,16 @@ try:
     has_xla = True
 except ImportError:
     has_xla = False
+
+
+def get_cache_root() -> Path:
+    if "KAGGLE_CACHE_ROOT" in os.environ:
+        return Path(os.environ["KAGGLE_CACHE_ROOT"])
+
+    if is_kaggle():
+        return Path("/kaggle/working")
+
+    return Path("/Volumes/Cache")
 
 
 def get_python_type():
@@ -147,3 +158,6 @@ def get_random_name(seed: Optional[int] = None) -> str:
 
 def get_osic_pulmonary_fibrosis_progression_root() -> Path:
     return get_input() / "osic-pulmonary-fibrosis-progression"
+
+
+cache = Memory(get_cache_root()).cache
