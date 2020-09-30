@@ -1,8 +1,8 @@
 import math
 from functools import partial
 
-import scipy as sp
 import numpy as np
+import scipy as sp
 from tqdm import tqdm
 
 

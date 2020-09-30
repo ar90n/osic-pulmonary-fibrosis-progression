@@ -1,8 +1,7 @@
 import os
 from dataclasses import dataclass
-from typing import Optional
-
 from distutils.util import strtobool
+from typing import Optional
 
 
 @dataclass

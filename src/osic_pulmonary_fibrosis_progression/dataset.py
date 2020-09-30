@@ -1,8 +1,9 @@
 import sys
-from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Optional, Any, Callable, Mapping, cast, Union, Tuple
 from functools import lru_cache
+from pathlib import Path
+from typing import Any, Callable, List, Mapping, Optional, Tuple, Union, cast
+
 import imageio as io
 import numpy as np
 import torch

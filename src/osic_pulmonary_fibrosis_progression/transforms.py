@@ -1,8 +1,8 @@
 import os
 import random
-from itertools import tee
-from typing import List, Tuple, Mapping, Any
 from collections import defaultdict
+from itertools import tee
+from typing import Any, List, Mapping, Tuple
 
 import numpy as np
 
@@ -59,13 +59,13 @@ class DropSlice:
 
     def __call__(self, stack: Stack):
         locations = self._get_locations(stack)
-        #if locations.size == 0:
+        # if locations.size == 0:
         #    return stack
 
         use_indice = []
         prev_loc = -float("inf")
         for i, loc in enumerate(locations):
-            #print(self._interval < (loc - prev_loc))
+            # print(self._interval < (loc - prev_loc))
             if loc is None or self._interval < (loc - prev_loc):
                 use_indice.append(i)
                 if loc is not None:
@@ -104,8 +104,8 @@ class DescribeVolume:
         ):
             if upper_loc is None or lower_loc is None:
                 return {
-                    "left_volume": float('nan'),
-                    "right_volume": float('nan'),
+                    "left_volume": float("nan"),
+                    "right_volume": float("nan"),
                 }
 
             interval = upper_loc - lower_loc

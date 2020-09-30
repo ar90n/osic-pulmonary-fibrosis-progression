@@ -1,12 +1,13 @@
 import sys
-from pathlib import Path
-from typing import cast, List, Optional, Mapping, Any
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, List, Mapping, Optional, cast
 
 import numpy as np
 from pydicom import dcmread
 
 from .util import cache
+
 
 @dataclass
 class Metadata:

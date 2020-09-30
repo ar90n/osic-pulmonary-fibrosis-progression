@@ -3,9 +3,9 @@ from typing import Tuple, cast
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.model_selection import GroupKFold
-from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
+from tqdm import tqdm
 
 from .datasource import DataSource
 from .util import get_osic_pulmonary_fibrosis_progression_root

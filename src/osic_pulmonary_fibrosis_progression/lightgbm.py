@@ -1,8 +1,9 @@
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+import pandas as pd
 
 import lightgbm as lgb
-import pandas as pd
-import numpy as np
 
 from .dataset import Dataset
 
@@ -19,7 +20,7 @@ DEFAULT_PARAM = {
     "bagging_fraction": 0.9,
     "feature_fraction": 0.9,
     "bagging_freq": 0.1,
-    "lambda_l2": 0.01
+    "lambda_l2": 0.01,
 }
 
 

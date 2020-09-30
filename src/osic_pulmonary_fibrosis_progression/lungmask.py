@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
 
-from lungmask import mask
-import SimpleITK as sitk
 import numpy as np
+import SimpleITK as sitk
+
+from lungmask import mask
 
 from .util import cache
 

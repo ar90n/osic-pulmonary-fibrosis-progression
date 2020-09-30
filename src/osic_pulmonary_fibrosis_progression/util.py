@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Iterable, Optional
 
 import torch
-from pytorch_lightning import seed_everything as pl_seed_evertything
 from joblib import Memory
+from pytorch_lightning import seed_everything as pl_seed_evertything
 
 from .config import Config
 
